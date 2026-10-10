@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+out/
+config.json
+targets.txt
+track_log.jsonl
+rid_map.txt
+send_*.log
+daily_report.txt
+*.eml

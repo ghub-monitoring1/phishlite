@@ -1,0 +1,15 @@
+{
+  "from_name": "示例公司人力资源部",
+  "from_addr": "hr@example.com",
+  "subject": "【示例】假期考勤异常名单公示，请尽快完成补录确认",
+  "links": {
+    "ehr": "https://ehr.example.com/attendance",
+    "help": "https://help.example.com/faq/attendance"
+  },
+  "vars": { "部门": "人力资源部", "截止日": "本周五 17:00" },
+  "attachments": [
+    { "filename": "假期考勤补录指引.pdf", "path": "templates/files/sample-attachment.pdf" }
+  ],
+  "body_text": "各位同事：\n\n假期结束，考勤系统已完成数据比对，检测到部分员工存在打卡缺失/异常记录。\n若有加班、值班或调休安排，请于{截止日}前登录考勤系统完成补录：\n\n{link:ehr}\n\n常见问题：{link:help}\n\n{部门}\n{date}",
+  "body_html": "<div style=\"font-family:'Microsoft YaHei',Arial,sans-serif;font-size:14px;color:#333;line-height:1.9;max-width:680px;\"><p>各位同事：</p><p>大家好！假期结束，考勤系统已完成假期前后的数据比对，检测到部分员工存在<b style=\"color:#e60012;\">打卡缺失 / 异常</b>记录。</p><p>若假期期间有<b>加班、值班或调休</b>安排，请于<span style=\"color:#e60012;font-weight:bold;\">{截止日}</span>前<span style=\"color:#e60012;font-weight:bold;\">登录考勤系统</span>完成补录确认。</p><div style=\"background:#fff7e6;border:1px solid #ffd591;border-radius:4px;padding:12px 16px;margin:16px 0;\"><p style=\"margin:0;color:#874d00;\"><b>&#9888; 逾期未确认的，将按「事假」处理，并影响当月薪资核算。</b></p></div><p style=\"text-align:center;margin:24px 0;\"><a href=\"{link:ehr}\" style=\"display:inline-block;background:#2f54eb;color:#ffffff;padding:10px 36px;border-radius:4px;text-decoration:none;font-weight:bold;font-size:15px;\">登录考勤系统</a></p><p style=\"color:#888;font-size:12px;text-align:center;\">常见问题见<a href=\"{link:help}\">补录指引</a></p><p style=\"margin-top:32px;\">{部门}<br/>{date}</p><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0;\"/><p style=\"color:#aaaaaa;font-size:11px;\">本邮件由考勤系统自动发送，请勿直接回复。</p>{pixel}</div>"
+}

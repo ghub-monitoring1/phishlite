@@ -1,0 +1,23 @@
+{
+  "server": {
+    "port": 8080,
+    "base_url": "http://YOUR_SERVER_IP:8080"
+  },
+  "smtp": {
+    "mode": "auto",
+    "host": "",
+    "port": 25,
+    "security": "plain",
+    "user": "",
+    "password": "",
+    "timeout": 30,
+    "fallback_mx": ["mx1.example.com"]
+  },
+  "campaign": {
+    "template": "example.json",
+    "phish_url": "https://your-training-site.example.com/login",
+    "env_from": "noreply@example.com",
+    "delay": [20, 45],
+    "vars": {}
+  }
+}

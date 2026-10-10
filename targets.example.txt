@@ -1,0 +1,3 @@
+# 目标邮箱列表, 每行一个, # 开头为注释
+alice@example.com
+bob@example.com
