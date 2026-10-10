@@ -35,6 +35,8 @@ def load_config():
 
 CFG = load_config()
 PORT = int(os.environ.get("PORT") or CFG["server"].get("port", 8080))
+TLS_CFG = CFG["server"].get("tls", {})          # 可选 HTTPS: {"cert": "a.pem", "key": "b.key"}
+USE_TLS = bool(TLS_CFG.get("cert") and TLS_CFG.get("key"))
 LOG = os.path.join(DIR, "track_log.jsonl")
 RIDMAP = os.path.join(DIR, "rid_map.txt")
 
@@ -358,6 +360,14 @@ class TS(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
     daemon_threads = True
 
+    def __init__(self, addr, handler):
+        super().__init__(addr, handler)
+        if USE_TLS:  # HTTPS 模式: https 页面(如 OWA)禁止加载 http 图片(mixed content), 必须 https
+            import ssl
+            ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            ctx.load_cert_chain(TLS_CFG["cert"], TLS_CFG["key"])
+            self.socket = ctx.wrap_socket(self.socket, server_side=True)
+
 
 if __name__ == "__main__":
     import sys, io
@@ -366,7 +376,8 @@ if __name__ == "__main__":
         sys.stderr.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
         pass
-    print(f"[*] PhishLite 追踪服务启动 0.0.0.0:{PORT}", flush=True)
+    proto = "https" if USE_TLS else "http"
+    print(f"[*] PhishLite 追踪服务启动 {proto}://0.0.0.0:{PORT}", flush=True)
     print(f"[*] 看板: http://<本机IP>:{PORT}/report   数据: /api/stats   健康: /health", flush=True)
     with TS(("0.0.0.0", PORT), Handler) as httpd:
         httpd.serve_forever()

@@ -1,7 +1,8 @@
 {
   "server": {
     "port": 8080,
-    "base_url": "http://YOUR_SERVER_IP:8080"
+    "base_url": "http://YOUR_SERVER_IP:8080",
+    "tls": {}
   },
   "smtp": {
     "mode": "auto",
@@ -11,13 +12,18 @@
     "user": "",
     "password": "",
     "timeout": 30,
-    "fallback_mx": ["mx1.example.com"]
+    "fallback_mx": [
+      "mx1.example.com"
+    ]
   },
   "campaign": {
     "template": "example.json",
     "phish_url": "https://your-training-site.example.com/login",
     "env_from": "noreply@example.com",
-    "delay": [20, 45],
+    "delay": [
+      20,
+      45
+    ],
     "vars": {}
   }
 }
