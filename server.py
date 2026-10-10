@@ -72,8 +72,14 @@ def log_event(ev_type, rid, ip, ua, extra=""):
     with open(LOG, "a", encoding="utf-8") as f:
         f.write(json.dumps(rec, ensure_ascii=False) + "\n")
     email = load_map().get(rid, "?")
-    tag = "打开邮件" if ev_type == "open" else "点击链接"
-    print(f"[+] {rec['time']} {email} {tag} ip={ip}", flush=True)
+    tag = "OPEN" if ev_type == "open" else "CLICK"
+    try:
+        print(f"[+] {rec['time']} {email} {tag} ip={ip}", flush=True)
+    except Exception:  # stdout 编码不支持时(如 LC_ALL=C)绝不能中断请求线程
+        try:
+            print(f"[+] {rec['time']} rid={rid} {ev_type} ip={ip}", flush=True)
+        except Exception:
+            pass
 
 
 # ---------------- 数据聚合 (供看板/日报/自定义集成) ----------------
@@ -267,6 +273,17 @@ setInterval(refresh, 10000);
 class Handler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
+        try:
+            self._route()
+        except BrokenPipeError:
+            pass  # 客户端提前断开(网关预取常见), 无需处理
+        except Exception as e:
+            try:
+                self.send_error(500, "internal")
+            except Exception:
+                pass
+
+    def _route(self):
         parsed = urllib.parse.urlparse(self.path)
         parts = parsed.path.strip("/").split("/")
 
@@ -343,6 +360,12 @@ class TS(socketserver.ThreadingTCPServer):
 
 
 if __name__ == "__main__":
+    import sys, io
+    try:  # systemd LANG=C 时 stdout=ascii, 强制 utf-8 并忽略不可编码字符
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
     print(f"[*] PhishLite 追踪服务启动 0.0.0.0:{PORT}", flush=True)
     print(f"[*] 看板: http://<本机IP>:{PORT}/report   数据: /api/stats   健康: /health", flush=True)
     with TS(("0.0.0.0", PORT), Handler) as httpd:
