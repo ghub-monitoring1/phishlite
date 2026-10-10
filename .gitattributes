@@ -1,0 +1,23 @@
+# ===== 行尾统一规则 (跨平台一致性的根本保障) =====
+# text=auto: git 自动识别文本文件, 提交时统一规范化
+# eol=lf   : 仓库与检出(Windows/Linux/macOS 均是)都强制 LF
+# 效果: 即使贡献者在 Windows 用 CRLF 编辑器改了文件, commit 后仓库里仍是 LF,
+#       Linux 上 bash 部署永远不会出现 $'\r': command not found
+
+* text=auto eol=lf
+
+# 脚本类强制 LF (CRLF 会导致 Linux bash 直接报错)
+*.sh  text eol=lf
+*.py  text eol=lf
+*.md  text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+
+# 二进制文件: 禁止任何转换
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.gif  binary
+*.ico  binary
+*.woff binary
+*.eml  binary

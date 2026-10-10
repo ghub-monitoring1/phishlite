@@ -269,7 +269,7 @@ def main():
     with open(log_file, "a", encoding="utf-8") as log:
         for i, rcpt in enumerate(rcpts, 1):
             try:
-                host = send_one(rcpt, build_message(rcpt, cfg, tpl))
+                host = send_one(rcpt, build_message(rcpt, cfg, tpl), cfg)
                 line = f"[{datetime.datetime.now():%H:%M:%S}] ({i}/{len(rcpts)}) {rcpt} rid={make_rid(rcpt)} -> OK via {host}"
                 ok += 1
             except smtplib.SMTPResponseException as e:
