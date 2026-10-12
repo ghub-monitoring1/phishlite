@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """PhishLite 每日日报: 已读/点击汇总 + 服务健康, 写 daily_report.txt"""
-import json, datetime, urllib.request, os
+import json, datetime, urllib.request, ssl, os
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.environ.get("CONFIG", os.path.join(DIR, "config.json"))
@@ -9,12 +9,18 @@ now = datetime.datetime.now()
 report = [f"===== PhishLite 演练日报 {now:%Y-%m-%d %H:%M} ====="]
 
 try:
-    port = json.load(open(CONFIG_PATH, encoding="utf-8"))["server"]["port"]
+    cfg = json.load(open(CONFIG_PATH, encoding="utf-8"))["server"]
+    port = cfg["port"]
+    # 与 server.py 同规则: tls.cert+key 都配置了即走 https 自检
+    t = cfg.get("tls", {})
+    proto = "https" if (t.get("cert") and t.get("key")) else "http"
 except Exception:
-    port = 8080
+    port, proto = 8080, "http"
 
 try:
-    r = urllib.request.urlopen(f"http://127.0.0.1:{port}/api/stats", timeout=5)
+    # 证书签给公网 IP, 本机 127.0.0.1 自检须跳过主机名校验(不影响外部浏览器信任)
+    ctx = ssl._create_unverified_context()
+    r = urllib.request.urlopen(f"{proto}://127.0.0.1:{port}/api/stats", timeout=5, context=ctx)
     s = json.loads(r.read())
     report.append(f"[服务] 追踪服务运行正常")
     report.append(f"[发送] 目标总数: {s['total']}")

@@ -378,6 +378,12 @@ if __name__ == "__main__":
         pass
     proto = "https" if USE_TLS else "http"
     print(f"[*] PhishLite 追踪服务启动 {proto}://0.0.0.0:{PORT}", flush=True)
-    print(f"[*] 看板: http://<本机IP>:{PORT}/report   数据: /api/stats   健康: /health", flush=True)
+    print(f"[*] 看板: {proto}://<本机IP>:{PORT}/report   数据: /api/stats   健康: /health", flush=True)
+    if USE_TLS:
+        for p in (TLS_CFG["cert"], TLS_CFG["key"]):
+            if not os.path.exists(p):
+                print(f"[!] 已配置 TLS 但证书文件不存在: {p}", flush=True)
+                print("    先运行: bash setup-https.sh <邮箱>   (签发 Let's Encrypt IP 证书, 无需域名)", flush=True)
+                raise SystemExit(1)
     with TS(("0.0.0.0", PORT), Handler) as httpd:
         httpd.serve_forever()
